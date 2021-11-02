@@ -16,8 +16,8 @@
 
 3. Клонируем репозиторий и переходим в склонированую директорию
     
-    ``git clone httpsgithub.comgregrahntpch-kit``br
-    ``cd tpch-kitdbgen``
+    ``git clone https://github.com/gregrahn/tpch-kit``
+    ``cd tpch-kit/dbgen``
 
 4. Забускаем билд библиотеки для операционой системы нашего инстанса
     
@@ -30,12 +30,12 @@
 
 6. Пропипеременую окружение для библиотеки генерации данных
     
-    ``export DSS_PATH=$HOMEemrdata``
+    ``export DSS_PATH=$HOME/emrdata``
 
 7. Запускаем генерацию  данных
     
-    ``cd tpch-kitdbgen``br
-    ``.dbgen -v -T o -s 10``
+    ``cd tpch-kit/dbgen``
+    ``./dbgen -v -T o -s 10``
 
     -v - для подробного режимаbr
     -T - для уточнения наших таблицbr
