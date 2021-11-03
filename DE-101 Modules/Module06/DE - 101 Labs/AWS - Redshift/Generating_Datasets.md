@@ -16,8 +16,8 @@
 
 3. Клонируем репозиторий и переходим в склонированую директорию
     
-    ``git clone httpsgithub.comgregrahntpch-kit``br
-    ``cd tpch-kitdbgen``
+    ``git clone https://github.comgregrahn/tpch-kit``
+    ``cd tpch-kit/dbgen``
 
 4. Забускаем билд библиотеки для операционой системы нашего инстанса
     
@@ -25,26 +25,26 @@
 
 5. Создаем дерикторию для нашых данных 
     
-    ``cd $HOME``br
+    ``cd $HOME``
     ``mkdir emrdata``
 
 6. Пропипеременую окружение для библиотеки генерации данных
     
-    ``export DSS_PATH=$HOMEemrdata``
+    ``export DSS_PATH=$HOME/emrdata``
 
 7. Запускаем генерацию  данных
     
-    ``cd tpch-kitdbgen``br
-    ``.dbgen -v -T o -s 10``
+    ``cd tpch-kit/dbgen``
+    ``.dbgen -v -T o -s 1``
 
     -v - для подробного режимаbr
-    -T - для уточнения наших таблицbr
+    -T - для уточнения наших таблиц
     o - для 2 таблиц, которые мы создадимbr
-    -s - для размера данных 10Gb
+    -s - для размера данных 1Gb
 
 8. Переходим в дирикторию с сгенерироваными данными
     
-    ``cd $HOMEermdata``br
+    ``cd $HOME/emrdata``
     ``ls``
    
     увидим два созанных файла ``lineitem.tbl orders.tbl``
@@ -57,55 +57,41 @@
 
 10. копируем созданные файлы в бакет
 
-    ``aws s3 cp $HOMEemrdata s3bigdatalabsemrdata --recursive``
-
-11. Давайте создадим датасет для лабараторной для redshift
-
-    ``cd`` - ето еквивалент команды ``cd $HOME``br
-    ``mkdir redshiftdata``br
-    ``export DSS_PATH=$HOMEredshiftdata``br
-    ``.dbgen -v -T o -s 40``
-
-12. Перейдем в дирикторию с новыми данными
-
-    ``cd $HOMEredshiftdata``br
-    ``ls -l``
+    ``aws s3 cp $HOME/emrdata s3://bigdatalabs/emrdata --recursive``
     
-13. Давай поделим ети файлы на более мелкие, ето поможет нам подгрузить данные в s3 хранилище быстрее и является хорошей практикой для работы с redshift. Сначало проверим количество строчек в файле orders.tbl
+11. Давай поделим ети файлы на более мелкие, ето поможет нам подгрузить данные в s3 хранилище быстрее и является хорошей практикой для работы с redshift. Сначало проверим количество строчек в файле orders.tbl
 
-   ``wc -l orders.tbl``br
-     60000000 orders.tbl
+   ``wc -l orders.tbl``
+     1500000 orders.tbl
 
-14. Давайте разобьем файл на 4 части
+12. Давайте разобьем файл на 3 части
     
-    ``split -d -l 15000000 -a 4 orders.tbl orders.tbl.``
+    ``split -d -l 500000 -a 3 orders.tbl orders.tbl.``
 
-15. так же разобьем файл lineitem.tbl
+13. так же разобьем файл lineitem.tbl
 
-    ``wc -l lineitem.tbl``br
-    ``240012290 lineitem.tbl``br
-    ``split -d -l 60000000 -a 4 lineitem.tbl lineitem.tbl.``
+    ``wc -l lineitem.tbl``
+    ``6000000 lineitem.tbl``
+    ``split -d -l 2000000 -a 3 lineitem.tbl lineitem.tbl.``
 
-16. На выходе получим
+14. На выходе получим
 
-    lineitem.tblbr
-    lineitem.tbl.0000br
-    lineitem.tbl.0001br
-    lineitem.tbl.0002br
-    lineitem.tbl.0003br
-    lineitem.tbl.0004br
-    orders.tblbr
-    orders.tbl.0000br
-    orders.tbl.0001br
-    orders.tbl.0002br
-    orders.tbl.0003
+    lineitem.tbl
+    lineitem.tbl.000
+    lineitem.tbl.001
+    lineitem.tbl.002
+    lineitem.tbl.003
+    orders.tbl
+    orders.tbl.000
+    orders.tbl.001
+    orders.tbl.002
 
-17. Нам уже не нужны файлы lineitem.tbl и orders.tbl
+15. Нам уже не нужны файлы lineitem.tbl и orders.tbl
 
     ``rm lineitem.tbl orders.tbl``
 
-18. Копируем новые данные в s3 хранилище
+16. Копируем новые данные в s3 хранилище
 
-    ``aws s3 cp $HOMEredshiftdata s3bigdatalabsredshiftdata --recursive``
+    ``aws s3 cp $HOME/emrdata s3://bigdatalabs/redshiftdata --recursive``
 
-19. Инстанс EC2 нам уже не нужен, можем его отключить
+17. Инстанс EC2 нам уже не нужен, можем его отключить
